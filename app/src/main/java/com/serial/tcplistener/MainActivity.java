@@ -43,33 +43,26 @@ public class MainActivity extends AppCompatActivity {
                 mIsServerActive = !mIsServerActive;
 
                 if (!mIsServerActive) {
-                    if (mThreadSocket != null && mThreadSocket.isAlive()) {
-                        mThreadSocket.interrupt();
-
-                    }
                     __binder.btnConnect.setText("Start server");
-                    __binder.tvMessages.setText("");
                     return;
                 }
 
-                __binder.tvMessages.setText("Starting server...\n");
+                appendToLog("Starting server...");
                 //SERVER_IP = __binder.etIP.getText().toString().trim();
                 SERVER_PORT = Integer.parseInt(__binder.etPort.getText().toString().trim());
 
                 mThreadSocket = new Thread(new SocketRunner());
                 mThreadSocket.start();
+                appendToLog("Server started...");
             }
         });
 
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mThreadSocket.interrupt();
+    private void appendToLog(String s){
+        __binder.tvMessages.setText(s + "\n"+__binder.tvMessages.getText().toString());
     }
-
-    public String getLocalIpAddress() {
+    private String getLocalIpAddress() {
         try {
             for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
                 NetworkInterface intf = en.nextElement();
@@ -127,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                __binder.tvMessages.setText(__binder.tvMessages.getText().toString() + "Client says: " + read + "\n");
+                                appendToLog(read);
                             }
                         });
 
