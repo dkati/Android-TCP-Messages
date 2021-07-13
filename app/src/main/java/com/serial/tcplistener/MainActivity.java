@@ -1,5 +1,6 @@
 package com.serial.tcplistener;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
 
@@ -16,6 +17,8 @@ import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Enumeration;
 
 @SuppressWarnings({"SetTextI18n","Convert2Lambda"})
@@ -60,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
+                    appendToLog("Server stopped...");
                     return;
                 }
 
@@ -77,7 +80,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void appendToLog(String s){
-        __binder.tvMessages.setText(s + "\n"+__binder.tvMessages.getText().toString());
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss.SSS");
+        String currentDateTime = dateFormat.format(new Date());
+        __binder.tvMessages.setText(currentDateTime+": "+s + "\n"+__binder.tvMessages.getText().toString());
     }
     private String getLocalIpAddress() {
         try {

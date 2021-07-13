@@ -34,6 +34,8 @@
         android:layout_height = "wrap_content"
         android:layout_below = "@+id/btnConnect"
         android:inputType = "textMultiLine"
+        android:textSize="15sp"
+        android:text=""
         android:textAppearance = "@style/Base.TextAppearance.AppCompat.Medium" />
 
 </RelativeLayout>
