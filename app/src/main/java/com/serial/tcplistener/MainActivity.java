@@ -1,14 +1,11 @@
 package com.serial.tcplistener;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.serial.tcplistener.databinding.ActivityMainBinding;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,15 +20,47 @@ import java.util.Enumeration;
 
 @SuppressWarnings({"SetTextI18n","Convert2Lambda"})
 public class MainActivity extends AppCompatActivity {
-    Thread Thread1 = null;
-    EditText etIP, etPort;
-    TextView tvMessages;
-    String SERVER_IP;
-    int SERVER_PORT;
+    private ActivityMainBinding __binder;
+    private Thread mThreadSocket = null;
+    //private String SERVER_IP;
+    private int SERVER_PORT;
     private ServerSocket serverSocket;
-    private Handler UIHandler;
+    
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        __binder = ActivityMainBinding.inflate(getLayoutInflater());
+        View view = __binder.getRoot();
+        setContentView(view);
 
-    public static String getLocalIpAddress() {
+        __binder.etIP.setText(getLocalIpAddress());
+
+        __binder.btnConnect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (mThreadSocket != null && mThreadSocket.isAlive()) {
+                    mThreadSocket.interrupt();
+                    return;
+                }
+
+                __binder.tvMessages.setText("Starting server...\n");
+                //SERVER_IP = __binder.etIP.getText().toString().trim();
+                SERVER_PORT = Integer.parseInt(__binder.etPort.getText().toString().trim());
+                mThreadSocket = new Thread(new SocketRunner());
+                mThreadSocket.start();
+            }
+        });
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mThreadSocket.interrupt();
+    }
+
+    public String getLocalIpAddress() {
         try {
             for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
                 NetworkInterface intf = en.nextElement();
@@ -48,44 +77,7 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        etIP = findViewById(R.id.etIP);
-        etPort = findViewById(R.id.etPort);
-        tvMessages = findViewById(R.id.tvMessages);
-        Button btnConnect = findViewById(R.id.btnConnect);
-
-        UIHandler = new Handler();
-        etIP.setText(getLocalIpAddress());
-
-        btnConnect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (Thread1 != null && Thread1.isAlive()) {
-                    Thread1.interrupt();
-                    return;
-                }
-
-                tvMessages.setText("");
-                SERVER_IP = etIP.getText().toString().trim();
-                SERVER_PORT = Integer.parseInt(etPort.getText().toString().trim());
-                Thread1 = new Thread(new Thread1());
-                Thread1.start();
-            }
-        });
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Thread1.interrupt();
-    }
-
-    class Thread1 implements Runnable {
+    class SocketRunner implements Runnable {
         public void run() {
             Socket socket;
             try {
@@ -96,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
                     socket = serverSocket.accept();
-                    Thread2 commThread = new Thread2(socket);
+                    SocketReaderRunner commThread = new SocketReaderRunner(socket);
                     new Thread(commThread).start();
                     return;
                 } catch (IOException e) {
@@ -106,10 +98,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    class Thread2 implements Runnable {
+    class SocketReaderRunner implements Runnable {
         private BufferedReader input;
 
-        public Thread2(Socket clientSocket) {
+        public SocketReaderRunner(Socket clientSocket) {
             try {
                 this.input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             } catch (IOException e) {
@@ -122,29 +114,22 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     String read = input.readLine();
                     if (read != null) {
-                        UIHandler.post(new updateUIThread(read));
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                __binder.tvMessages.setText(__binder.tvMessages.getText().toString() + "Client says: " + read + "\n");
+                            }
+                        });
+
                     } else {
-                        Thread1 = new Thread(new Thread1());
-                        Thread1.start();
+                        mThreadSocket = new Thread(new SocketRunner());
+                        mThreadSocket.start();
                         return;
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-        }
-    }
-
-    class updateUIThread implements Runnable {
-        private final String msg;
-
-        public updateUIThread(String str) {
-            this.msg = str;
-        }
-
-        @Override
-        public void run() {
-            tvMessages.setText(tvMessages.getText().toString() + "Client says: " + msg + "\n");
         }
     }
 }
