@@ -2,6 +2,7 @@ package com.serial.tcplistener;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -39,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
         __binder = ActivityMainBinding.inflate(getLayoutInflater());
         View view = __binder.getRoot();
         setContentView(view);
+
+        __binder.tvMessages.setMovementMethod(new ScrollingMovementMethod());
 
         __binder.etIP.setText(getLocalIpAddress());
 

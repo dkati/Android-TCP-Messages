@@ -28,13 +28,14 @@
         android:layout_gravity = "center"
         android:layout_marginTop = "16dp"
         android:text = "Start Server" />
+
     <TextView
         android:id = "@+id/tvMessages"
         android:layout_width = "match_parent"
         android:layout_height = "wrap_content"
         android:layout_below = "@+id/btnConnect"
-        android:inputType = "textMultiLine"
         android:textSize="15sp"
+        android:scrollbars="vertical"
         android:text=""
         android:textAppearance = "@style/Base.TextAppearance.AppCompat.Medium" />
 
