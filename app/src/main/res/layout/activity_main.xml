@@ -1,18 +1,19 @@
 <?xml version = "1.0" encoding = "utf-8"?>
-<RelativeLayout xmlns:android = "http://schemas.android.com/apk/res/android"
-    xmlns:tools = "http://schemas.android.com/tools"
-    android:layout_width = "match_parent"
-    android:layout_height = "match_parent"
-    android:layout_margin = "16dp"
-    android:padding="20dp"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
     tools:ignore="HardcodedText"
-    tools:context = ".MainActivity">
+    android:layout_margin="20dp">
 
     <LinearLayout
         android:id="@+id/ipcontainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
         android:weightSum="1">
 
         <TextView
@@ -20,38 +21,36 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:textSize="20sp"
-            android:text=""/>
+            android:text=""
+            android:textSize="20sp" />
 
         <EditText
             android:id="@+id/etPort"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:autofillHints=""
             android:hint="Port"
-            android:layout_weight="0.5"
             android:inputType="number"
-            android:text="8000"
-            android:autofillHints="" />
+            android:text="8000" />
 
+        <Button
+            android:id="@+id/btnConnect"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="0.3"
+            android:text="Start" />
     </LinearLayout>
 
-    <Button
-        android:id = "@+id/btnConnect"
-        android:layout_width = "match_parent"
-        android:layout_height = "wrap_content"
-        android:layout_below = "@+id/ipcontainer"
-        android:layout_gravity = "center"
-        android:layout_marginTop = "16dp"
-        android:text = "Start Server" />
-
     <TextView
-        android:id = "@+id/tvMessages"
-        android:layout_width = "match_parent"
-        android:layout_height = "wrap_content"
-        android:layout_below = "@+id/btnConnect"
-        android:textSize="15sp"
+        android:id="@+id/tvMessages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ipcontainer"
         android:scrollbars="vertical"
         android:text=""
-        android:textAppearance = "@style/Base.TextAppearance.AppCompat.Medium" />
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+        android:textSize="15sp" />
 
 </RelativeLayout>

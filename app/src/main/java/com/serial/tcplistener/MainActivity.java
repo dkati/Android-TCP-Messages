@@ -49,11 +49,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                __binder.btnConnect.setText("Stop server");
+                __binder.btnConnect.setText("Stop");
                 mIsServerActive = !mIsServerActive;
 
                 if (!mIsServerActive) {
-                    __binder.btnConnect.setText("Start server");
+                    __binder.btnConnect.setText("Start");
                     if (mThreadSocket != null) mThreadSocket.interrupt();
                     if (mCommunicationThread != null) mCommunicationThread.interrupt();
 
