@@ -22,9 +22,11 @@ import java.util.Enumeration;
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding __binder;
     private Thread mThreadSocket = null;
+    private Thread mCommunicationThread = null;
+
     //private String SERVER_IP;
     private int SERVER_PORT;
-    private ServerSocket serverSocket;
+    private ServerSocket mServerSocket;
     private boolean mIsServerActive = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,11 @@ public class MainActivity extends AppCompatActivity {
 
                 if (!mIsServerActive) {
                     __binder.btnConnect.setText("Start server");
+                    if (mThreadSocket != null) mThreadSocket.interrupt();
+                    if (mCommunicationThread != null) mCommunicationThread.interrupt();
+                    
+                    mThreadSocket = null;
+                    mCommunicationThread = null;
                     return;
                 }
 
@@ -84,15 +91,20 @@ public class MainActivity extends AppCompatActivity {
         public void run() {
             Socket socket;
             try {
-                serverSocket = new ServerSocket(SERVER_PORT);
+                mServerSocket = new ServerSocket(SERVER_PORT);
             } catch (IOException e) {
                 e.printStackTrace();
             }
             while (!Thread.currentThread().isInterrupted()) {
                 try {
-                    socket = serverSocket.accept();
+                    socket = mServerSocket.accept();
                     SocketReaderRunner commThread = new SocketReaderRunner(socket);
-                    new Thread(commThread).start();
+
+                    if (mCommunicationThread != null)
+                        mCommunicationThread.interrupt();
+
+                    mCommunicationThread = new Thread(commThread);
+                    mCommunicationThread.start();
                     return;
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -125,6 +137,9 @@ public class MainActivity extends AppCompatActivity {
                         });
 
                     } else {
+                        if (mThreadSocket != null)
+                            mThreadSocket.interrupt();
+
                         mThreadSocket = new Thread(new SocketRunner());
                         mThreadSocket.start();
                         return;
