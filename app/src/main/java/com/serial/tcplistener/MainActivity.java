@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     //private String SERVER_IP;
     private int SERVER_PORT;
     private ServerSocket serverSocket;
-    
+    private boolean mIsServerActive = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,14 +39,23 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if (mThreadSocket != null && mThreadSocket.isAlive()) {
-                    mThreadSocket.interrupt();
+                __binder.btnConnect.setText("Stop server");
+                mIsServerActive = !mIsServerActive;
+
+                if (!mIsServerActive) {
+                    if (mThreadSocket != null && mThreadSocket.isAlive()) {
+                        mThreadSocket.interrupt();
+
+                    }
+                    __binder.btnConnect.setText("Start server");
+                    __binder.tvMessages.setText("");
                     return;
                 }
 
                 __binder.tvMessages.setText("Starting server...\n");
                 //SERVER_IP = __binder.etIP.getText().toString().trim();
                 SERVER_PORT = Integer.parseInt(__binder.etPort.getText().toString().trim());
+
                 mThreadSocket = new Thread(new SocketRunner());
                 mThreadSocket.start();
             }
@@ -78,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     class SocketRunner implements Runnable {
+        
         public void run() {
             Socket socket;
             try {
