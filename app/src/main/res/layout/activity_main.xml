@@ -5,26 +5,41 @@
     android:layout_height = "match_parent"
     android:layout_margin = "16dp"
     android:padding="20dp"
+    tools:ignore="HardcodedText"
     tools:context = ".MainActivity">
-    <EditText
-        android:id = "@+id/etIP"
-        android:layout_width = "match_parent"
-        android:layout_height = "wrap_content"
-        android:hint = "IP-Address"
-        android:inputType = "text"/>
-    <EditText
-        android:id = "@+id/etPort"
-        android:layout_width = "match_parent"
-        android:layout_height = "wrap_content"
-        android:layout_below = "@+id/etIP"
-        android:hint = "Port No"
-        android:text="8000"
-        android:inputType = "number" />
+
+    <LinearLayout
+        android:id="@+id/ipcontainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <TextView
+            android:id="@+id/etIP"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:textSize="20sp"
+            android:text=""/>
+
+        <EditText
+            android:id="@+id/etPort"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Port"
+            android:layout_weight="0.5"
+            android:inputType="number"
+            android:text="8000"
+            android:autofillHints="" />
+
+    </LinearLayout>
+
     <Button
         android:id = "@+id/btnConnect"
         android:layout_width = "match_parent"
         android:layout_height = "wrap_content"
-        android:layout_below = "@+id/etPort"
+        android:layout_below = "@+id/ipcontainer"
         android:layout_gravity = "center"
         android:layout_marginTop = "16dp"
         android:text = "Start Server" />
