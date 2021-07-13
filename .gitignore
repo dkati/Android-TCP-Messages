@@ -14,6 +14,7 @@
 /.idea/misc.xml
 /.idea/runConfigurations.xml
 /.idea/vcs.xml
+/app/build
 
 .DS_Store
 /build
