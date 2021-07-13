@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     //private String SERVER_IP;
     private int SERVER_PORT;
     private ServerSocket mServerSocket;
+    private Socket mSocket;
+
     private boolean mIsServerActive = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +50,17 @@ public class MainActivity extends AppCompatActivity {
                     __binder.btnConnect.setText("Start server");
                     if (mThreadSocket != null) mThreadSocket.interrupt();
                     if (mCommunicationThread != null) mCommunicationThread.interrupt();
-                    
+
                     mThreadSocket = null;
                     mCommunicationThread = null;
+
+                    try {
+                        mSocket.close();
+                        mServerSocket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                     return;
                 }
 
@@ -89,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
     class SocketRunner implements Runnable {
         
         public void run() {
-            Socket socket;
             try {
                 mServerSocket = new ServerSocket(SERVER_PORT);
             } catch (IOException e) {
@@ -97,8 +106,8 @@ public class MainActivity extends AppCompatActivity {
             }
             while (!Thread.currentThread().isInterrupted()) {
                 try {
-                    socket = mServerSocket.accept();
-                    SocketReaderRunner commThread = new SocketReaderRunner(socket);
+                    mSocket = mServerSocket.accept();
+                    SocketReaderRunner commThread = new SocketReaderRunner(mSocket);
 
                     if (mCommunicationThread != null)
                         mCommunicationThread.interrupt();
