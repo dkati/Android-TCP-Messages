@@ -61,8 +61,10 @@ public class MainActivity extends AppCompatActivity {
                     mCommunicationThread = null;
 
                     try {
-                        mSocket.close();
-                        mServerSocket.close();
+                        if (mSocket != null)
+                            mSocket.close();
+                        if (mServerSocket != null)
+                            mServerSocket.close();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
